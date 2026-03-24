@@ -1,1 +1,2 @@
-from eeg_simulator import EEGSimulator
+from spectral_generator import SpectralDataGenerator
+from factor_analysis import FactorAnalyzer
