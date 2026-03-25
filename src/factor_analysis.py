@@ -19,13 +19,17 @@ class NonLinearFactorAnalyzer:
     def fit(self, data: np.ndarray):
         self.data_ = data
         self.scaler = StandardScaler()
-        data_scaled = self.scaler.fit_transform(data)
+        self.scaler.fit(data)
+        self.scaler.scale_ = np.std(data, axis=0, ddof=1)
+        data_scaled = self.scaler.transform(data)
 
         self.kpca = KernelPCA(
             n_components=self.n_factors,
             kernel=self.kernel,
             gamma=self.gamma
         )
+        print('Стандартизованная матрица')
+        print(pd.DataFrame(data_scaled))
         self.kpca.fit(data_scaled)
         return self
 
