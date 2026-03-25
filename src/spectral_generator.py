@@ -200,7 +200,11 @@ class SpectralDataGenerator:
         fig, axes = plt.subplots(3, 3, figsize=(12, 10))
         axes = axes.flatten()
 
-        for idx, ax in enumerate(axes):
+        indices = []
+        indices.extend(range(3))
+        indices.extend(range(X.shape[0] // 2, X.shape[0] // 2 + 3))
+        indices.extend(range(X.shape[0] - 3, X.shape[0]))
+        for idx, ax in zip(indices, axes):
             if idx < n_samples and idx < X.shape[0]:
                 subject = idx
                 label = labels[subject]

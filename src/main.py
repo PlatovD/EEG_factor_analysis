@@ -1,4 +1,4 @@
-from factor_analysis import FactorAnalyzer
+from factor_analysis import NonLinearFactorAnalyzer
 from spectral_generator import SpectralDataGenerator
 
 if __name__ == '__main__':
@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
     generator.plot_spectral_profiles(X, labels, n_samples=150)
 
-    analyzer = FactorAnalyzer(
+    analyzer = NonLinearFactorAnalyzer(
         n_factors=5,
         kernel='rbf',
         gamma=0.1

@@ -1,2 +1,2 @@
 from spectral_generator import SpectralDataGenerator
-from factor_analysis import FactorAnalyzer
+from factor_analysis import NonLinearFactorAnalyzer

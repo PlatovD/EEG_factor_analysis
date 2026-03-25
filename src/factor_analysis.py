@@ -6,7 +6,7 @@ from sklearn.decomposition import KernelPCA
 from sklearn.preprocessing import StandardScaler
 
 
-class FactorAnalyzer:
+class NonLinearFactorAnalyzer:
     def __init__(self, n_factors: int = 5, kernel: str = 'rbf', gamma: float = 0.1):
         self.n_factors = n_factors
         self.kernel = kernel
@@ -73,7 +73,6 @@ class FactorAnalyzer:
             'Subject': range(1, len(self.factors_) + 1),
             'F1': self.factors_[:, 0].round(3),
             'F2': self.factors_[:, 1].round(3),
-            'F3': self.factors_[:, 2].round(3) if self.n_factors > 2 else self.factors_[:, 1].round(3),
         })
 
         if labels is not None:
@@ -131,13 +130,6 @@ class FactorAnalyzer:
         table.auto_set_font_size(False)
         ax.add_table(table)
 
-        if labels is not None:
-            legend_elements = []
-            for group, color in group_colors.items():
-                if group in df['Group'].values:
-                    legend_elements.append(plt.Rectangle((0, 0), 1, 1, facecolor=color, label=group))
-            ax.legend(handles=legend_elements, loc='upper right', fontsize=10)
-
         plt.title(f'Factor analysis results',
                   fontsize=14, pad=20)
         plt.tight_layout()
@@ -147,7 +139,7 @@ class FactorAnalyzer:
 
     def plot_factors_scatter(self, labels=None, group_names=None):
         if self.factors_ is None:
-            raise ValueError("No factors available. Run fit_transform first.")
+            raise ValueError("No factors available. Run fit_transform first")
 
         plt.figure(figsize=(10, 8))
 
