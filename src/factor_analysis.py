@@ -26,7 +26,8 @@ class NonLinearFactorAnalyzer:
         self.kpca = KernelPCA(
             n_components=self.n_factors,
             kernel=self.kernel,
-            gamma=self.gamma
+            gamma=self.gamma,
+            fit_inverse_transform=True
         )
         print('Стандартизованная матрица')
         print(pd.DataFrame(data_scaled))
@@ -40,6 +41,19 @@ class NonLinearFactorAnalyzer:
         data_scaled = self.scaler.transform(data)
         self.factors_ = self.kpca.transform(data_scaled)
         return self.factors_
+
+    def get_explained_variance(self):
+        eigenvalues = self.kpca.eigenvalues_
+        total_variance = np.sum(eigenvalues)
+        explained_variance_ratio = eigenvalues / total_variance
+        cumulative_ratio = np.cumsum(explained_variance_ratio)
+        return explained_variance_ratio, cumulative_ratio
+
+    def get_eigenvalues(self):
+        return self.kpca.eigenvalues_
+
+    def get_eigenvectors(self):
+        return self.kpca.eigenvectors_
 
     def fit_transform(self, data: np.ndarray) -> np.ndarray:
         self.fit(data)
@@ -164,7 +178,6 @@ class NonLinearFactorAnalyzer:
         plt.xlabel('Factor 1', fontsize=14)
         plt.ylabel('Factor 2', fontsize=14)
         plt.title('Subjects in Factor Space', fontsize=16)
-        plt.legend(loc='best', fontsize=12)
         plt.grid(True, alpha=0.3)
         plt.tight_layout()
         plt.show()

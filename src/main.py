@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import StandardScaler
 
 from factor_analysis import NonLinearFactorAnalyzer
 from spectral_generator import SpectralDataGenerator
@@ -13,23 +12,41 @@ if __name__ == '__main__':
         seed=42
     )
 
-    X, labels, freqs = generator.generate_test_data(
-        n_subjects=3,
-        groups=['alpha', 'beta', 'mixed']
-    )
-    X = np.array([
-        [6.6, 3.9, 4.7],
-        [7, 5.6, 1.3],
-        [5.4, 6.8, 5.1]
-    ])
+    X = generator.generate_non_linear_data(100)
+    Y = generator.generate_full_random(100)
+    print(pd.DataFrame(X))
 
     analyzer = NonLinearFactorAnalyzer(
-        n_factors=5,
+        n_factors=2,
+        kernel='rbf',
+        gamma=0.1
+    )
+    analyzer_on_random = NonLinearFactorAnalyzer(
+        n_factors=2,
         kernel='rbf',
         gamma=0.1
     )
     analyzer.fit_transform(X)
+    analyzer_on_random.fit_transform(Y)
     print('Факторы на выходе')
     print(pd.DataFrame(analyzer.get_factors()))
-    analyzer.plot_factors_scatter(labels=labels)
-    analyzer.plot_factors_table(labels=labels, group_names={0: 'Alpha', 1: 'Beta', 2: 'Mixed'})
+    print('Факторы для рандома')
+    print(pd.DataFrame(analyzer_on_random.factors_))
+
+    X_transformed = analyzer.get_factors()
+    dot_products = np.dot(X_transformed.T, X_transformed)
+    print(pd.DataFrame(dot_products))
+    np.fill_diagonal(dot_products, 0)
+    max_correlation = np.max(np.abs(dot_products))
+
+    print(f"Максимальная корреляция между компонентами: {max_correlation:.10f}")
+    analyzer.plot_factors_scatter()
+    analyzer.plot_factors_table()
+    analyzer_on_random.plot_factors_scatter()
+
+    print(f'Объясненная дисперсия {analyzer.get_explained_variance()}')
+    print(analyzer.get_eigenvalues())
+    print(analyzer.get_eigenvectors())
+    print(f'Объясненная дисперсия {analyzer_on_random.get_explained_variance()}')
+    print(analyzer_on_random.get_eigenvalues())
+    print(analyzer_on_random.get_eigenvectors())

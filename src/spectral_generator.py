@@ -29,6 +29,46 @@ class SpectralDataGenerator:
     ) -> np.ndarray:
         return amplitude * np.exp(-((self.frequencies - center) ** 2) / (2 * sigma ** 2))
 
+    def generate_full_random(self, n_samples: int):
+        np.random.seed(82)
+        features = []
+        for _ in range(n_samples):
+            features.append(np.random.uniform(-100, 100, n_samples))
+        return np.stack(features)
+
+    def generate_non_linear_data(self, n_samples: int):
+        if n_samples < 2:
+            raise ValueError('Нужно минимум 2 базовых признака')
+
+        np.random.seed(42)
+
+        latent_factors = []
+        for i in range(n_samples):
+            factor = np.random.uniform(-2, 2, n_samples)
+            latent_factors.append(factor)
+
+        features = []
+        feature1 = 2.5 * latent_factors[0] + 1.5 * latent_factors[1]
+        features.append(feature1)
+        feature2 = 1.8 * latent_factors[1] - 2.0 * latent_factors[2] if n_samples > 2 else 1.8 * latent_factors[1]
+        features.append(feature2)
+        feature3 = latent_factors[0] * latent_factors[1]
+        features.append(feature3)
+
+        feature4 = latent_factors[0] ** 2 + 0.5 * latent_factors[1] * latent_factors[2] if n_samples > 2 else \
+            latent_factors[0] ** 2
+        features.append(feature4)
+
+        feature5 = np.sin(latent_factors[0] + latent_factors[1])
+        features.append(feature5)
+
+        for i in range(len(features)):
+            features[i] += np.random.normal(0, 0, n_samples)
+
+        X = np.column_stack(features)
+        self.latent_factors_ = np.column_stack(latent_factors)
+        return X
+
     def generate_alpha_dominant(
             self,
             n_samples: int,
