@@ -1,8 +1,6 @@
 import numpy as np
 from pylsl import StreamInlet, resolve_streams
 
-from src import NonLinearFactorAnalyzer
-
 
 def compute_wavelet(data, fs, freqs):
     w = 5.0
